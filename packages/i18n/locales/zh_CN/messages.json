@@ -1,0 +1,30 @@
+{
+  "extensionDescription": {
+    "description": "Extension description",
+    "message": "1browser 扩展"
+  },
+  "extensionName": {
+    "description": "Extension name",
+    "message": "1browser 扩展"
+  },
+  "toggleTheme": {
+    "message": "切换主题"
+  },
+  "loading": {
+    "message": "加载中..."
+  },
+  "greeting": {
+    "description": "问候消息",
+    "message": "你好，我叫 $NAME$",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "1browser"
+      }
+    }
+  },
+  "hello": {
+    "description": "占位符示例",
+    "message": "你好 $1"
+  }
+}
