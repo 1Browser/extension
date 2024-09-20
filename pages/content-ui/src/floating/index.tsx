@@ -41,8 +41,9 @@ export function Floating() {
 
   return (
     <div
-      className="fixed top-0 right-0 h-screen"
+      className="fixed top-0 h-screen w-0"
       style={{
+        right: 40,
         zIndex: 2147483647,
       }}
       ref={containerRef}>
