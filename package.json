@@ -33,17 +33,20 @@
     "update-version:default": "./update_version.sh"
   },
   "dependencies": {
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "tailwind-merge": "^2.4.0",
     "@mantine/core": "^7.12.2",
     "@mantine/hooks": "^7.12.2",
+    "@tabler/icons-react": "^3.17.0",
     "framer-motion": "^11.5.5",
-    "@tabler/icons-react": "^3.17.0"
+    "hash-wasm": "^4.11.0",
+    "pako": "^2.1.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "tailwind-merge": "^2.4.0"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.271",
     "@types/node": "^22.5.5",
+    "@types/pako": "^2.0.3",
     "@types/react": "^18.3.8",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
