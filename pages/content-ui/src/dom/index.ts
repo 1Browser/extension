@@ -1,24 +1,8 @@
-function getElementPath(el: Element): string {
-  // Function to construct the exact path for an element
-  if (!(el instanceof Element)) return '';
-
-  const parts = [];
-  while (el && el.nodeType === Node.ELEMENT_NODE) {
-    let selector = el.nodeName.toLowerCase();
-
-    // Add ID or classes to make the selector more specific
-    if (el.id) {
-      selector += `#${el.id}`;
-    } else if (el.className) {
-      const classes = el.className.trim().split(/\s+/);
-      selector += '.' + classes.join('.');
-    }
-
-    parts.unshift(selector);
-    el = el.parentElement as Element;
-  }
-
-  return parts.join(' > ');
+export interface TextPosition {
+  node: Element;
+  childIndex: number;
+  textIndex: number;
+  textLength: number;
 }
 
 export interface TextPosition {
@@ -27,6 +11,90 @@ export interface TextPosition {
   textIndex: number;
   textLength: number;
 }
+
+export function highlightText(position: TextPosition, highlightClass: string = 'highlight'): void {
+  const { node, childIndex, textIndex, textLength } = position;
+
+  // Get the child node (it should be a Text node)
+  const childNode = node.childNodes[childIndex];
+
+  if (!childNode || childNode.nodeType !== Node.TEXT_NODE) {
+    console.error('Child node is not a text node');
+    return;
+  }
+
+  const textNode = childNode as Text; // Cast to Text node
+  const textContent = textNode.nodeValue;
+
+  if (!textContent) {
+    console.error('No text content in the node');
+    return;
+  }
+
+  // Extract the text before, to be highlighted, and after the highlighted part
+  const beforeText = textContent.slice(0, textIndex);
+  const highlightedText = textContent.slice(textIndex, textIndex + textLength);
+  const afterText = textContent.slice(textIndex + textLength);
+
+  // Create new nodes to replace the original text node
+  const beforeNode = document.createTextNode(beforeText);
+  const afterNode = document.createTextNode(afterText);
+  const highlightNode = document.createElement('span');
+  highlightNode.className = highlightClass;
+  highlightNode.textContent = highlightedText;
+
+  highlightNode.setAttribute('style', 'background-color: yellow;');
+
+  // Replace the original text node with the new nodes (before, highlight, after)
+  const parentNode = textNode.parentNode;
+  if (parentNode) {
+    parentNode.insertBefore(beforeNode, textNode);
+    parentNode.insertBefore(highlightNode, textNode);
+    parentNode.insertBefore(afterNode, textNode);
+    parentNode.removeChild(textNode); // Remove the original text node
+  }
+}
+
+export function getUniqueSelector(element: Node | null): string | null {
+  if (!element || element.nodeType !== Node.ELEMENT_NODE) {
+    return null; // Return null if element is null or not an Element node
+  }
+
+  let currentElement = element as Element; // Safely cast Node to Element
+
+  // If the element has an ID, use it directly because IDs are unique in the DOM
+  if (currentElement.id) {
+    return `#${currentElement.id}`;
+  }
+
+  // Start with the element's tag name
+  let selector: string = currentElement.tagName.toLowerCase();
+
+  // If the element has classes, include them in the selector
+  if (currentElement.classList.length > 0) {
+    selector += '.' + Array.from(currentElement.classList).join('.');
+  }
+
+  // Calculate nth-child index
+  let sibling: Element | null = currentElement;
+  let nthChild: number = 1;
+
+  while (sibling && sibling.previousElementSibling) {
+    sibling = sibling.previousElementSibling;
+    nthChild++;
+  }
+
+  selector += `:nth-child(${nthChild})`;
+
+  // Recursively find the selector for the parent and build the full path
+  const parentElement = currentElement.parentElement;
+  if (parentElement && parentElement.tagName.toLowerCase() !== 'html') {
+    return getUniqueSelector(parentElement) + ' > ' + selector;
+  } else {
+    return selector;
+  }
+}
+
 export function findExactElementWithContinuousText(characters: string[]): TextPosition[] {
   const elements = document.querySelectorAll('*:not(script):not(style):not(noscript)');
   const matchingNodes: TextPosition[] = [];
